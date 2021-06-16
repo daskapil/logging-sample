@@ -35,7 +35,7 @@
                 for which the outer conditions are true.
                 -->
                 <Delete basePath="${logDir}" maxDepth="2">
-                    <IfFileName glob="*/app-*.log.gz">
+                    <IfFileName glob="*/${logFileName}-*.log.gz">
                         <IfLastModified age="30d">
                             <IfAny>
                                 <IfAccumulatedFileSize exceeds="100 GB"/>
