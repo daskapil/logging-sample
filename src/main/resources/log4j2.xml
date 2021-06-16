@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logDir">logs</Property>
+        <Property name="logFileName">app</Property>
+        <!--        <Property name="logPattern">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %m%n</Property>-->
+        <Property name="logPattern">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logPattern}"/>
+        </Console>
+
+        <RollingFile name="RollingFile" fileName="${logDir}/${logFileName}.log"
+                     filePattern="${logDir}/$${date:yyyy-MM}/${logFileName}-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>${logPattern}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="1 MB"/>
+            </Policies>
+            <!--
+            Use the below DefaultRolloverStrategy to define a log file retention policy.
+            Below is a sample configuration that uses a RollingFileAppender with both the time and size based
+            triggering policies, will create up to 100 archives on the same day (1-100) that are stored in a
+            directory based on the current year and month, and will compress each archive using gzip and will
+            roll every hour. During every rollover, this configuration will delete files that match "*/app-*.log.gz"
+            and are 30 days old or older, but keep the most recent 100 GB or the most recent 10 files,
+            whichever comes first.
+            -->
+            <DefaultRolloverStrategy max="100">
+                <!--
+                Nested conditions: the inner condition is only evaluated on files
+                for which the outer conditions are true.
+                -->
+                <Delete basePath="${baseDir}" maxDepth="2">
+                    <IfFileName glob="*/app-*.log.gz">
+                        <IfLastModified age="30d">
+                            <IfAny>
+                                <IfAccumulatedFileSize exceeds="100 GB"/>
+                                <IfAccumulatedFileCount exceeds="10"/>
+                            </IfAny>
+                        </IfLastModified>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.kapil.sample" level="debug" additivity="true">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
