@@ -34,7 +34,7 @@
                 Nested conditions: the inner condition is only evaluated on files
                 for which the outer conditions are true.
                 -->
-                <Delete basePath="${baseDir}" maxDepth="2">
+                <Delete basePath="${logDir}" maxDepth="2">
                     <IfFileName glob="*/app-*.log.gz">
                         <IfLastModified age="30d">
                             <IfAny>
